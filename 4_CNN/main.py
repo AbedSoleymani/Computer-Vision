@@ -51,10 +51,7 @@ weight = torch.from_numpy(filters).unsqueeze(1).type(torch.FloatTensor)
 model = Net(weight=weight)
 print(model)
 
-# %%
-
 gray_img_tensor = torch.from_numpy(gray_img).unsqueeze(0).unsqueeze(1)
-
 conv_output, activatio_output = model(gray_img_tensor)
 
 model.viz_layer(layer=conv_output)
