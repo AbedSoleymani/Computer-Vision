@@ -58,3 +58,5 @@ model.viz_layer(layer=conv_output)
 model.viz_layer(layer=activatio_output)
 
 # %%
+print("Git change!")
+# %%
