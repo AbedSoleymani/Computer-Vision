@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from net import Net
+from fasionMNIST import Data
 
 # %% READING THE IMAGE
 
@@ -52,11 +53,18 @@ model = Net(weight=weight)
 print(model)
 
 gray_img_tensor = torch.from_numpy(gray_img).unsqueeze(0).unsqueeze(1)
-conv_output, activatio_output = model(gray_img_tensor)
+conv_output, activatio_output, pooled_output = model.forward(gray_img_tensor)
 
-model.viz_layer(layer=conv_output)
-model.viz_layer(layer=activatio_output)
+model.viz_layer(layer=conv_output,
+                tag='conv_output:')
+model.viz_layer(layer=activatio_output,
+                tag='activatio_output:')
+model.viz_layer(layer=pooled_output,
+                tag='pooled_output:')
 
 # %%
-print("Git change!")
+
+fashionMNIST = Data(batch_size=20)
+train_data, test_data, classes = fashionMNIST.generate()
+
 # %%

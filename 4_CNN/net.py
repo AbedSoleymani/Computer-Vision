@@ -13,17 +13,20 @@ class Net(nn.Module):
                               kernel_size=(k_height,
                                            k_width),
                               bias=False)
-        self.conv.weight = torch.nn.Parameter(weight)
+        self.conv.weight = nn.Parameter(weight)
+        self.pool = nn.MaxPool2d(kernel_size=4,
+                                 stride=4)
 
     def forward(self, x):
         conv_output = self.conv(x)
         activatio_output = F.relu(conv_output)
+        pooled_output = self.pool(activatio_output)
 
-        return conv_output, activatio_output
+        return conv_output, activatio_output, pooled_output
     
-    def viz_layer(self, layer, n_filters= 4):
+    def viz_layer(self, layer, tag: str, n_filters= 4):
         fig = plt.figure(figsize=(20, 20))
-        
+        print(tag)
         for i in range(n_filters):
             ax = fig.add_subplot(1,
                                  n_filters,
