@@ -40,15 +40,17 @@ class Net(nn.Module):
             ax.set_title('Output %s' % str(i+1))
 
 
-class ConvNet1(nn.Module):
-    def __init__(self):
-        super(ConvNet1, self).__init__()
+class ConvNet(nn.Module):
+    def __init__(self,
+                 is_simple=True):
+        super(ConvNet, self).__init__()
         
         # one 28*28 input image channel (grayscale), 10 output channels/feature maps
         # 3x3 square convolution kernel
         ## output size = (W-F)/S +1 = (28-3)/1 +1 = 26
         # the output Tensor for one image, will have the dimensions: (10, 26, 26)
         # after one pool layer, this becomes (10, 13, 13)
+        self.is_simple = is_simple
         self.conv1 = nn.Conv2d(in_channels=1,
                                out_channels=10,
                                kernel_size=3)
@@ -64,21 +66,39 @@ class ConvNet1(nn.Module):
                                out_channels=20,
                                kernel_size=3)
         
+        ## Expert model
+        # 20 outputs * the 5*5 filtered/pooled map size
+        self.fc1 = nn.Linear(20*5*5, 50)
+        self.fc1_drop = nn.Dropout(p=0.4)
+        self.fc2 = nn.Linear(50, 10)
+
+        ## Simple model
         # 20 outputs * the 5*5 filtered/pooled map size
         # 10 output channels (for the 10 classes)
-        self.fc1 = nn.Linear(20*5*5, 10)
+        self.fc3 = nn.Linear(20*5*5, 10)
         
     def forward(self, x):
+        if self.is_simple:
+            x = self.pool(F.relu(self.conv1(x)))
+            x = self.pool(F.relu(self.conv2(x)))
 
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
+            # this line is the equivalent of Flatten in Keras
+            x = x.view(x.size(0), -1)
+            
+            x = self.fc3(x)
+            # converting the 10 outputs into a distribution of class scores
+            x = F.log_softmax(x, dim=1)
 
-        x = x.view(x.size(0), -1)
-        
-        x = self.fc1(x)
-        # converting the 10 outputs into a distribution of class scores
-        x = F.log_softmax(x, dim=1)
-        
+        else:
+            x = self.pool(F.relu(self.conv1(x)))
+            x = self.pool(F.relu(self.conv2(x)))
+
+            x = x.view(x.size(0), -1)
+            
+            x = F.relu(self.fc1(x))
+            x = self.fc1_drop(x)
+            x = self.fc2(x)
+            
         return x
     
     def train_model(self,
@@ -185,7 +205,7 @@ class ConvNet1(nn.Module):
                         color=("green" if preds[idx]==labels[idx] else "red"))
             
     def save_model(self,
-                   model_dir='saved_models/',
-                   model_name='fashion_net_simple.pt'):
+                   model_name,
+                   model_dir='saved_models/'):
         
         torch.save(self.state_dict(), model_dir+model_name)

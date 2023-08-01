@@ -64,6 +64,7 @@ model.viz_layer(layer=pooled_output,
 
 # %%
 batch_size = 20
+n_epochs = 3
 fashionMNIST = Data(batch_size=batch_size)
 train_loader, test_loader, classes = fashionMNIST.generate()
 fashionMNIST.visualize(data_generator=train_loader,
@@ -71,34 +72,59 @@ fashionMNIST.visualize(data_generator=train_loader,
 
 # %%
 
-convnet1 = ConvNet1()
-print(convnet1)
+convnet_simple = ConvNet(is_simple=True)
+print(convnet_simple)
 
 # cross entropy loss combines softmax and nn.NLLLoss() in one single class.
 criterion = nn.NLLLoss()
-optimizer = optim.SGD(convnet1.parameters(), lr=0.001)
+optimizer = optim.SGD(convnet_simple.parameters(), lr=0.001)
 
-training_loss = convnet1.train_model(train_loader=train_loader,
-                                     criterion=criterion,
-                                     optimizer=optimizer,
-                                     n_epochs=5)
+training_loss = convnet_simple.train_model(train_loader=train_loader,
+                                           criterion=criterion,
+                                           optimizer=optimizer,
+                                           n_epochs=n_epochs)
 
-convnet1.plot_loss(loss_vector=training_loss)
-
-# %%
-
-convnet1.test_model(test_loader=test_loader,
-                    criterion=criterion,
-                    batch_size=batch_size,
-                    classes=classes)
-
-convnet1.test_visualize(net=convnet1,
-                        test_loader=test_loader,
-                        batch_size=batch_size,
-                        classes=classes)
-
-convnet1.save_model()
+convnet_simple.plot_loss(loss_vector=training_loss)
 
 # %%
 
+convnet_simple.test_model(test_loader=test_loader,
+                          criterion=criterion,
+                          batch_size=batch_size,
+                          classes=classes)
 
+convnet_simple.test_visualize(net=convnet_simple,
+                              test_loader=test_loader,
+                              batch_size=batch_size,
+                              classes=classes)
+
+convnet_simple.save_model(model_name='fashion_net_simple.pt')
+
+# %%
+
+convnet_expert = ConvNet(is_simple=False)
+print(convnet_expert)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(convnet_expert.parameters(), lr=0.001, momentum=0.9)
+
+training_loss = convnet_expert.train_model(train_loader=train_loader,
+                                           criterion=criterion,
+                                           optimizer=optimizer,
+                                           n_epochs=n_epochs)
+
+convnet_expert.plot_loss(loss_vector=training_loss)
+
+# %%
+convnet_expert.test_model(test_loader=test_loader,
+                          criterion=criterion,
+                          batch_size=batch_size,
+                          classes=classes)
+
+convnet_expert.test_visualize(net=convnet_simple,
+                              test_loader=test_loader,
+                              batch_size=batch_size,
+                              classes=classes)
+
+convnet_expert.save_model(model_name='fashion_net_ex.pt')
+# %%
