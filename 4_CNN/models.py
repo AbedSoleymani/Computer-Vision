@@ -209,3 +209,13 @@ class ConvNet(nn.Module):
                    model_dir='saved_models/'):
         
         torch.save(self.state_dict(), model_dir+model_name)
+
+    @staticmethod
+    def filters_visualization(filters):
+        fig=plt.figure(figsize=(20, 8))
+        columns = 5
+        rows = 2
+        for i in range(0, columns*rows):
+            fig.add_subplot(rows, columns, i+1)
+            plt.imshow(filters[i][0], cmap='gray')
+        plt.show()

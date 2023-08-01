@@ -64,7 +64,7 @@ model.viz_layer(layer=pooled_output,
 
 # %%
 batch_size = 20
-n_epochs = 3
+n_epochs = 1
 fashionMNIST = Data(batch_size=batch_size)
 train_loader, test_loader, classes = fashionMNIST.generate()
 fashionMNIST.visualize(data_generator=train_loader,
@@ -128,3 +128,9 @@ convnet_expert.test_visualize(net=convnet_simple,
 
 convnet_expert.save_model(model_name='fashion_net_ex.pt')
 # %%
+
+filters = convnet_expert.conv2.weight.data.numpy()
+convnet_expert.filters_visualization(filters=filters)
+
+# %%
+
