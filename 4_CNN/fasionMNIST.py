@@ -52,11 +52,11 @@ class Data():
     
     def visualize(self, data_generator, classes):
         dataiter = iter(data_generator)
-        images, labels = dataiter.next()
+        images, labels = next(dataiter)
         images = images.numpy()
 
         fig = plt.figure(figsize=(25, 4))
         for idx in np.arange(self.batch_size):
-            ax = fig.add_subplot(2, self.batch_size/2, idx+1, xticks=[], yticks=[])
+            ax = fig.add_subplot(2, self.batch_size//2, idx+1, xticks=[], yticks=[])
             ax.imshow(np.squeeze(images[idx]), cmap='gray')
             ax.set_title(classes[labels[idx]])

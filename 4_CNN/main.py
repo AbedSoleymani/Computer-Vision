@@ -4,7 +4,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from net import Net
+from models import *
 from fasionMNIST import Data
 
 # %% READING THE IMAGE
@@ -63,8 +63,42 @@ model.viz_layer(layer=pooled_output,
                 tag='pooled_output:')
 
 # %%
-
-fashionMNIST = Data(batch_size=20)
-train_data, test_data, classes = fashionMNIST.generate()
+batch_size = 20
+fashionMNIST = Data(batch_size=batch_size)
+train_loader, test_loader, classes = fashionMNIST.generate()
+fashionMNIST.visualize(data_generator=train_loader,
+                       classes=classes)
 
 # %%
+
+convnet1 = ConvNet1()
+print(convnet1)
+
+# cross entropy loss combines softmax and nn.NLLLoss() in one single class.
+criterion = nn.NLLLoss()
+optimizer = optim.SGD(convnet1.parameters(), lr=0.001)
+
+training_loss = convnet1.train_model(train_loader=train_loader,
+                                     criterion=criterion,
+                                     optimizer=optimizer,
+                                     n_epochs=5)
+
+convnet1.plot_loss(loss_vector=training_loss)
+
+# %%
+
+convnet1.test_model(test_loader=test_loader,
+                    criterion=criterion,
+                    batch_size=batch_size,
+                    classes=classes)
+
+convnet1.test_visualize(net=convnet1,
+                        test_loader=test_loader,
+                        batch_size=batch_size,
+                        classes=classes)
+
+convnet1.save_model()
+
+# %%
+
+
