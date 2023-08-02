@@ -1,4 +1,4 @@
-from utils import *
+from utils import load_class_names
 from darknet import Darknet
 
 def model_setup(cfg_file='./5_YOLO/cfg/yolov3.cfg',
