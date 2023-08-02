@@ -5,6 +5,7 @@
 data
 saved_models
 .DS_Store
+yolov3.weights
 
 ################
 # Default ones!
