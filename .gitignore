@@ -4,6 +4,7 @@
 
 data
 saved_models
+.DS_Store
 
 ################
 # Default ones!
