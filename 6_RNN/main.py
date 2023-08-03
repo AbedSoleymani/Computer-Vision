@@ -27,10 +27,13 @@ optimizer = torch.optim.Adam(rnn_model.parameters(),
 rnn_model.train(criterion=criterion,
                 optimizer=optimizer,
                 training_data=data,
-                n_steps=150,
+                epochs=300,
                 print_every=30)
 
 """
 As you see, the overall prediction for first few steps are relatively bad!
-This is because the model has no information about the history of the time-series
+This is because the model has no information about the history of the time-series.
+
+Moreover, the prediction for time steps with sharp changes (beginning and and of
+the input time-series) are relatively bad.
 """

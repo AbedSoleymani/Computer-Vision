@@ -46,43 +46,49 @@ class RNN(nn.Module):
               criterion,
               optimizer,
               training_data,
-              n_steps=100,
+              epochs=100,
               print_every=20):
         
-        # initialize the hidden state
-        hidden = None      
+        hidden = None  # initializing the hidden state 
         
-        for batch_i, step in enumerate(range(n_steps)):
-            x = training_data[:-1]
-            y = training_data[1:]
+        for epoch in range(epochs):
+            input = training_data[:-1]
+            target = training_data[1:]
             
-            # convert data into Tensors
-            x_tensor = torch.Tensor(x).unsqueeze(0) # unsqueeze gives a 1, batch_size dimension
-            y_tensor = torch.Tensor(y)
+            input_tensor = torch.Tensor(input).unsqueeze(0) # unsqueeze gives a 1, batch_size dimension
+            target_tensor = torch.Tensor(target)
 
-            # outputs from the rnn
-            prediction, hidden = self.forward(x_tensor, hidden)
+            prediction, hidden = self.forward(input_tensor, hidden)
 
             ## Representing Memory ##
             # make a new variable for hidden and detach the hidden state from its history
             # this way, we don't backpropagate through the entire history
             hidden = hidden.data
 
-            # calculate the loss
-            loss = criterion(prediction, y_tensor)
-            # zero gradients
+            loss = criterion(prediction, target_tensor)
             optimizer.zero_grad()
-            # perform backprop and update weights
             loss.backward()
             optimizer.step()
 
             # display loss and predictions
-            time_steps = np.linspace(0, np.pi, len(x))
-            if batch_i%print_every == print_every-1:        
-                print('Loss: ', loss.item())
-                plt.plot(time_steps, x, 'r.', label='input') # input
-                plt.plot(time_steps, y, 'g*', label='target') # target
-                plt.plot(time_steps, prediction.data.numpy().flatten(), 'b.', label='prediction') # predictions
+            time_steps = np.linspace(0, np.pi, len(input))
+            if epoch%print_every == print_every-1:        
+                print('Epoch {}, Loss: {}'.format(epoch+1, loss.item()))
+                plt.plot(time_steps,
+                         input,
+                         'r.',
+                         label='input')
+                
+                plt.plot(time_steps,
+                         target,
+                         'g*',
+                         label='target')
+                
+                plt.plot(time_steps,
+                         prediction.data.numpy().flatten(),
+                         'b.',
+                         label='prediction')
+                
                 plt.legend(loc='best')
-                plt.title('RNN prediction after {} steps.'.format(batch_i+1))
+                plt.title('RNN prediction after {} epochs.'.format(epoch+1))
                 plt.show()
