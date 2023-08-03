@@ -41,7 +41,6 @@ class RNN(nn.Module):
         
         return output, hidden
     
-    # train the RNN
     def train(self,
               criterion,
               optimizer,
