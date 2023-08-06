@@ -36,10 +36,26 @@ c0 = Variable(torch.randn(num_layers,
 # %%
 
 for input in inputs:
-    print(input.shape)
-# for input in inputs:
-#     out, hidden = lstm(Variable(input), (h0, c0))
-#     print('out: \n', out)
-#     print('hidden: \n', hidden)
+    output, (hidden, cell) = lstm(Variable(torch.Tensor(input).unsqueeze(1)),
+                                  (h0, c0))
+    print(output)
+    # print(hidden)
+    # print(cell)
 
 # %%
+
+"""
+A for loop is not very efficient for large sequences of data
+So we can also, process all of these inputs at once.
+
+    1. concatenate all our input sequences into one big tensor,
+    with a defined batch_size
+    2. define the shape of our hidden state
+    3. get the outputs and the most recent hidden state
+    (created after the last word in the sequence has been seen)
+"""
+
+output, (hidden, cell) = lstm(inputs, (h0, c0))
+print(output)
+# print(hidden)
+# print(cell)
