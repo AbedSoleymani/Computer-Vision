@@ -5,7 +5,7 @@ However, we can imagine a more flexible model in which we have a set of $m$ feat
 values $V$ and the model dynamically decides (in an input dependenent way) which one to
 use, based on how similar the input query vector $q$ is to a set of $m$ keys $K$.
 If $q$ is most similar to key $i$, then we use value $v_i$. This is the basic idea behind _attention mechanisms_.
-
+![attention](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/5e1efd9b-cea0-41cf-9102-5bd2a879fe36)
 We can think of attention as a _dictionary lookup_, in which we compare the query $q$ to each key $k_i$,
 and then retrieve the corresponding value $v_i$. To make this lookup operation _differentiable_, instead
 of retrieving a single value $v_i$, we compute a convex combination of the values.
