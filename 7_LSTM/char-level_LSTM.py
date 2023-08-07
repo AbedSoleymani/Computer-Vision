@@ -19,7 +19,7 @@ from model import CharLSTM
  int2char,
  char2int,
  text,
- chars) = read_txt(path='books/anna.txt')
+ chars) = read_txt(path='books/shakespeare.txt') # anna/shakespeare.txt
 
 print(text[:20])
 print(encoded[:20])
