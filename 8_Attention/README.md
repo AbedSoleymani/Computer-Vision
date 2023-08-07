@@ -17,5 +17,7 @@ Given the scores, we can compute the attention weights using the _softmax_ funct
 If we force the attention heatmap to be sparse, so that each output can only attend to one input
 location instead of a weighted combination of all of them, the method is called hard attention. We
 compare these two approaches for an image captioning problem in the image below:
-
-Unfortunately, hard attention results in a nondifferentiable training objective, and requires methods such as reinforcement learning to fit the model
+<img width="1368" alt="Screenshot 2023-08-07 at 1 47 44 PM" src="https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/49679d7d-6821-4de9-becf-d5fe68c0437e">
+It seems from the above examples that these attention heatmaps can “explain” why the model
+generates a given output. However, the interpretability of attention is controversial.
+Unfortunately, hard attention results in a nondifferentiable training objective, and requires methods such as reinforcement learning to fit the model.
