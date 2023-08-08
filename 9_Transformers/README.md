@@ -55,4 +55,25 @@ layer, and add it to the set of keys/values that can be attended to.
 
 ### Comparing transformers, CNNs and RNNs/LSTMs
 
+### Transformers for images
+CNNs are the most common model type for processing image data, since they have
+**useful built-in inductive bias**, such as `locality` (due to small kernels), `equivariance` (due to weight
+tying), and `invariance` (due to pooling). Suprisingly, it has been found that transformers can also do
+well at image classification, at least if trained on enough data. (They need a lot of data to overcome
+their lack of relevant inductive bias.)
 
+**ViT** models (vision transformer), that chops the input up into
+16x16 patches, projects each patch into an embedding space, and then passes this set of embeddings
+$x_{1:T}$ to a transformer, analogous to the way word embeddings are passed to a transformer. The input
+is also prepended with a special [CLASS] embedding, $x_0$. The output of the transformer is a set of
+encodings $e_{0:T}$ ; the model maps e0 to the target class label $y$, and is trained in a supervised way.
+
+After supervised pretraining, the model is fine-tuned on various downstream classification tasks,
+an approach known as transfer learning. When trained on “small”
+datasets such as ImageNet (which has 1k classes and 1.3M images), they find that they cannot
+outperform a pretrained CNN ResNet model known as BiT (big transfer) [Kol+20].
+However, when trained on larger datasets, such as ImageNet-21k (with 21k classes and 14M images),
+or the Google-internal JFT dataset (with 18k classes and 303M images), they find that ViT does
+better than BiT at transfer learning. It is also cheaper to train than ResNet at this scale. (However,
+training is still expensive: the large ViT model on ImageNet-21k takes 30 days on a Google Cloud
+TPUv3 with 8 cores!)
