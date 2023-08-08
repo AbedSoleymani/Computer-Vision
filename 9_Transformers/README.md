@@ -54,7 +54,7 @@ sequentially, and use masked attention, where we feed the generated output into 
 layer, and add it to the set of keys/values that can be attended to.
 
 ### Comparing transformers, CNNs and RNNs/LSTMs
-
+<img width="712" alt="Screenshot 2023-08-07 at 6 11 12 PM" src="https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/e8ff4b44-7f4f-4b50-a2c5-9e8b783ed9d3">
 ### Transformers for images
 CNNs are the most common model type for processing image data, since they have
 **useful built-in inductive bias**, such as `locality` (due to small kernels), `equivariance` (due to weight
