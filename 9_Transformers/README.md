@@ -55,6 +55,7 @@ layer, and add it to the set of keys/values that can be attended to.
 
 ### Comparing transformers, CNNs and RNNs/LSTMs
 <img width="712" alt="Screenshot 2023-08-07 at 6 11 12 PM" src="https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/e8ff4b44-7f4f-4b50-a2c5-9e8b783ed9d3">
+
 ### Transformers for images
 CNNs are the most common model type for processing image data, since they have
 **useful built-in inductive bias**, such as `locality` (due to small kernels), `equivariance` (due to weight
@@ -77,3 +78,16 @@ or the Google-internal JFT dataset (with 18k classes and 303M images), they find
 better than BiT at transfer learning. It is also cheaper to train than ResNet at this scale. (However,
 training is still expensive: the large ViT model on ImageNet-21k takes 30 days on a Google Cloud
 TPUv3 with 8 cores!)
+
+Self-attention ViT architecture is used to capture relationships between different patches (i.e., non-overlapping unified-length square parts of the input image) of an image and enable the model to make better sense of the input image and focus on relevant regions during image analysis. Self-attention is a key component of the Transformer's ability to capture both _local_ and _global_ dependencies between patches.
+
+Here are steps in ViT:
+1. **Flattening Patches:** Each image is divided into non-overlapping patches, often represented as square regions. Each patch is then flattened into a one-dimensional vector by concatenating the pixel values along rows or columns.
+2. **Linear Projection (Embedding):** The flattened patch vectors are passed through a linear projection (also known as an embedding layer) to map them to higher-dimensional representations. This projection aims to transform the pixel values into more informative and expressive embeddings that the model can work with.
+3. **Positional Encodings:** Since ViT doesn't have inherent knowledge of the spatial arrangement of patches, positional encodings are added to the patch embeddings. These positional encodings provide information about the location of each patch within the image and help the model understand the spatial relationships.
+4. **Tokenization:** After obtaining the patch embeddings with positional encodings, these embeddings are treated as tokens and fed into the transformer model. Each patch embedding serves as a token that the self-attention mechanism processes. These tokens are usually the input to the model's self-attention layers.
+5. **Self-Attention and Processing:** The self-attention mechanism in the transformer processes the tokenized patch embeddings to capture relationships between different patches. This enables the model to attend to relevant patches and capture context from the entire image.
+6. **Layer Stacking and Processing:** Multiple self-attention and feedforward layers are stacked to create a deep hierarchy within the transformer model. Each layer refines and aggregates information from previous layers, allowing the model to learn increasingly abstract features.
+7. **Classification Head:** The final token representations output by the self-attention layers are used for classification. A classification head (often a fully connected layer) takes these token representations and produces class predictions based on the learned features.
+
+The original Vision Transformer (ViT) architecture, as introduced in the paper "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale," does not include a separate decoder like the one found in the traditional Transformer model used for natural language processing tasks as the main task of ViT is extracting meaningful features and understaing spatial relationships between different patches of the input image for the downstream tasks.
