@@ -89,7 +89,7 @@ Here are steps in ViT:
 <img src=https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/0277215c-ca11-42c7-b3ba-153bc15a4c43 height=350>
 <div align="left">
 
-3. **Linear Projection (Embedding):** The flattened patch vectors are passed through a linear projection (also known as an embedding layer) to map them to higher-dimensional representations. This projection aims to transform the pixel values into more informative and expressive embeddings that the model can work with.<br>
+3. **Linear Projection (Embedding):** The flattened patch vectors are passed through a linear projection (also known as an embedding layer) to map them to higher-dimensional representations. This projection aims to transform the pixel values into more informative and expressive embeddings that the model can work with. Moreover, such dimensionality reduction improves the computational and memory complexity of the model and helps the model to become more robust (e.g., against input noise) for the downstream task which benefits the generalization.<br>
 <div align="center">
 <img src=https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/ab5f782a-00f3-4879-b754-0d3ac3e2cb9d height=350>
 <div align="left">
