@@ -63,7 +63,7 @@ CNNs are the most common model type for processing image data, since they have
 **useful built-in inductive bias**, such as `locality` (due to small kernels), `equivariance` (due to weight
 tying), and `invariance` (due to pooling). Suprisingly, it has been found that transformers can also do
 well at image classification, at least if trained on enough data. (They need a lot of data to overcome
-their lack of relevant inductive bias. For more detail, please see the final discussion.)
+their lack of relevant inductive bias. For more detail, please see the final discussion.) It was observed that despite heavy regularization effort, ViT overfits the ImageNet (10M images) and performs worse than CNN-based models, but is much better than CNNs on larger datasets (e.g., with 300M images).
 
 **ViT** models (vision transformer), that chops the input up into
 16x16 patches, projects each patch into an embedding space, and then passes this set of embeddings
@@ -94,10 +94,11 @@ Here are steps in ViT:
 <img src=https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/ab5f782a-00f3-4879-b754-0d3ac3e2cb9d height=350>
 <div align="left">
 
-5. **Positional Encodings:** Since ViT doesn't have inherent knowledge of the spatial arrangement of patches, positional encodings are added to the patch embeddings. These positional encodings provide information about the location of each patch within the image and help the model understand the spatial relationships. Please note that unlike NLP transformer that uses sine/cosine basis function which delivers fixed embeddings, positional embeddings in ViT are learnable. In fact, the positional embeddings are a set of vectors for each patch location that get trained with gradient descent along with other parameters. As you can see in the image below, the learned embedding is pretty interesting. During training, the ViT finds out that which patch belongs to which part of the image!
+5. **Positional Encodings:** Since ViT doesn't have inherent knowledge of the spatial arrangement of patches, positional encodings are added to the patch embeddings. These positional encodings provide information about the location of each patch within the image and help the model understand the spatial relationships. Please note that unlike NLP transformer that uses sine/cosine basis function which delivers fixed embeddings, positional embeddings in ViT are learnable. In fact, the positional embeddings are a set of vectors for each patch location that get trained with gradient descent along with other parameters. As you can see in the image below, the learned embedding is pretty interesting. During training, the ViT finds out that which patch belongs to which part of the image and which patches are neighbours based on their similarity! Please note that the order of feeding patches to the ViT should remain the same for all inputs in training and test phase.
 <div align="center">
-<img width="300" alt="image" src="https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/e64c36bc-89f6-42d1-8acf-5848653263c2">
+<img width="500" alt="image" src="https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/6b16d6e6-fc91-4957-9c2a-9aba0ee2b3f6">
 <div align="left">
+  
 7. **Tokenization:** After obtaining the patch embeddings with positional encodings, these embeddings are treated as tokens and fed into the transformer model. Each patch embedding serves as a token that the self-attention mechanism processes. These tokens are usually the input to the model's self-attention layers.
 8. **Self-Attention and Processing:** The self-attention mechanism in the transformer processes the tokenized patch embeddings to capture relationships between different patches. This enables the model to attend to relevant patches and capture context from the entire image.
 9. **Layer Stacking and Processing:** Multiple self-attention and feedforward layers are stacked to create a deep hierarchy within the transformer model. Each layer refines and aggregates information from previous layers, allowing the model to learn increasingly abstract features.
@@ -108,6 +109,12 @@ Here are steps in ViT:
 
 The original Vision Transformer (ViT) architecture, as introduced in the paper "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale," does not include a separate decoder like the one found in the traditional Transformer model used for natural language processing tasks as the main task of ViT is extracting meaningful features and understaing spatial relationships between different patches of the input image for the downstream tasks.
 
+ViT can be pre-trained with unlabeled data. To this end, we can do:
+* Patch Prediction: The model learns to predict missing patches within an image. It masks out some patches and learns to reconstruct them from the surrounding patches. This is similar to predicting missing words in a sentence, a task used in natural language processing.
+* Contrastive Learning: This involves creating positive pairs (patches from the same image) and negative pairs (patches from different images) and training the model to bring positive pairs closer together in the embedding space while pushing negative pairs apart. This encourages the model to learn features that are unique to each image while being invariant to common transformations.
+* Rotation Prediction: The model learns to predict the rotation applied to an image. This task encourages the model to capture spatial relationships between patches.
+
+Moreover, we can further pre-train ViT by large datasets and transfer/fine-tune the learned model for smaller datasets.
 **ATTENTION DISTANCE**
 To understand how ViT uses self-attention to integrate information across the image, we can analyze the _average distance_ spanned by attention weights at different layers:
 <div align="center">
