@@ -63,7 +63,7 @@ CNNs are the most common model type for processing image data, since they have
 **useful built-in inductive bias**, such as `locality` (due to small kernels), `equivariance` (due to weight
 tying), and `invariance` (due to pooling). Suprisingly, it has been found that transformers can also do
 well at image classification, at least if trained on enough data. (They need a lot of data to overcome
-their lack of relevant inductive bias.)
+their lack of relevant inductive bias. For more detail, please see the final discussion.)
 
 **ViT** models (vision transformer), that chops the input up into
 16x16 patches, projects each patch into an embedding space, and then passes this set of embeddings
@@ -94,7 +94,10 @@ Here are steps in ViT:
 <img src=https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/ab5f782a-00f3-4879-b754-0d3ac3e2cb9d height=350>
 <div align="left">
 
-5. **Positional Encodings:** Since ViT doesn't have inherent knowledge of the spatial arrangement of patches, positional encodings are added to the patch embeddings. These positional encodings provide information about the location of each patch within the image and help the model understand the spatial relationships. Please note that unlike NLP transformer that uses sine/cosine basis function which delivers fixed embeddings, positional embeddings in ViT are learnable. In fact, the positional embeddings are a set of vectors for each patch location that get trained with gradient descent along with other parameters.
+5. **Positional Encodings:** Since ViT doesn't have inherent knowledge of the spatial arrangement of patches, positional encodings are added to the patch embeddings. These positional encodings provide information about the location of each patch within the image and help the model understand the spatial relationships. Please note that unlike NLP transformer that uses sine/cosine basis function which delivers fixed embeddings, positional embeddings in ViT are learnable. In fact, the positional embeddings are a set of vectors for each patch location that get trained with gradient descent along with other parameters. As you can see in the image below, the learned embedding is pretty interesting. During training, the ViT finds out that which patch belongs to which part of the image!
+<div align="center">
+<img width="300" alt="image" src="https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/e64c36bc-89f6-42d1-8acf-5848653263c2">
+<div align="left">
 7. **Tokenization:** After obtaining the patch embeddings with positional encodings, these embeddings are treated as tokens and fed into the transformer model. Each patch embedding serves as a token that the self-attention mechanism processes. These tokens are usually the input to the model's self-attention layers.
 8. **Self-Attention and Processing:** The self-attention mechanism in the transformer processes the tokenized patch embeddings to capture relationships between different patches. This enables the model to attend to relevant patches and capture context from the entire image.
 9. **Layer Stacking and Processing:** Multiple self-attention and feedforward layers are stacked to create a deep hierarchy within the transformer model. Each layer refines and aggregates information from previous layers, allowing the model to learn increasingly abstract features.
@@ -104,3 +107,21 @@ Here are steps in ViT:
 <div align="left">
 
 The original Vision Transformer (ViT) architecture, as introduced in the paper "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale," does not include a separate decoder like the one found in the traditional Transformer model used for natural language processing tasks as the main task of ViT is extracting meaningful features and understaing spatial relationships between different patches of the input image for the downstream tasks.
+
+**ATTENTION DISTANCE**
+To understand how ViT uses self-attention to integrate information across the image, we can analyze the _average distance_ spanned by attention weights at different layers:
+<div align="center">
+<img width="350" alt="Screenshot 2023-08-09 at 12 55 25 AM" src="https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/cc623fd8-765d-40bc-b6ef-538fbebf7fa0">
+<div align="left">
+
+This “attention distance” is analogous to **receptive field size in CNNs**. Average attention distance is highly variable across heads in lower layers, with some heads attending to much of the image, while others attend to small regions at or near the query location. As depth increases, attention distance increases for all heads. In the second half of the network, most heads attend widely (globally) across tokens.<br>
+This result indicate that ViT has the advantage of paying attention to things in the input image that are far a way even at shallow layers of their processing (CNNs do not have this luxury!).
+
+### What's the big deal with transformers and ViT?
+Both insist that they do not need RNN/LSTM or CNN in their structure; just MLP! This insistence blocks the inductive bias presented in both RNN/LSTM and CNN. LSTMs/RNNs inherently assume that the order of elements in a sequence matters. This inductive bias helps them learn temporal relationships and patterns within sequences, making them suitable for tasks with sequential inputs. CNNs assume that local patterns (such as edges, textures, and shapes) are important building blocks for recognizing objects. This assumption is embedded in the convolutional and pooling layers, which focus on capturing local features and reducing spatial dimensions. Moreover, CNNs learn to recognize features at different levels of abstraction. Lower layers capture low-level features like edges, while higher layers capture more complex and abstract features. This hierarchical structure mimics the idea that visual information is processed in a similar manner in the human visual system.
+
+Before the advent of transformers, these inductive biases were effective. They helped mitigate limitations stemming from the restricted training data. It was akin to informing these models that while we acknowledge their struggles with learning from relatively small datasets, we would guide them by supplementing with domain-specific knowledge. This approach led us to _biased_ models that showed good performances, but not as good as an unbiased model like the transformer, which was trained on more extensive datasets. The reason behind the fact that transformers requiring larger datasets is their reduced bias compared to RNNs/LSTMs/CNNs. Yes, they are indeed _less_ biased! Transformers remain biased to some extent due to their residual layers.
+A residual layer (or residual block) within a neural network architecture can be viewed as an inductive bias since it introduces a specific _structural bias_ that aids in the training of exceedingly deep networks.
+
+Residual layers assume that a "good" transformation should be relatively small. This assumption stems from the notion that, in an ideal scenario, a layer should learn an identity mapping (or a close approximation) if the optimal transformation is not substantially deviating from the identity. Additionally, residual layers provide an implicit prior that encourages the model to learn incremental, fine-tuned alterations to the input data, rather than undergoing drastic changes.
+
