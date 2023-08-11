@@ -15,6 +15,16 @@ generate a pronoun of the correct gender in French, we need to know what “it�
 coreference resolution). In the first case, the word “it” refers to the animal. In the second case,
 the word “it” now refers to the street. Apparently, self attention in encoder plays an important role.
 
+**Query, Key, Value**
+
+The self-attention mechanism uses three matrices - query (Q), key (K), and value (V) - to help the system understand and process the relationships between words in a sentence. These three matrices serve distinct purposes:
+
+1. Query (Q): This matrix represents the focus word for which the context is being determined. By transforming the word representation using the query matrix, the system generates a query vector that will be used to compare against other words in the sentence.
+2. Key (K): The key matrix is used to create key vectors for all words in the sentence. These key vectors help the system measure the relevance or similarity between the focus word (using the query vector) and other words in the sentence. A higher similarity score between the query vector and a key vector indicates a stronger relationship between the corresponding words.
+3. Value (V): The value matrix generates value vectors for all words in the sentence. These vectors hold the contextual information of each word. After calculating the similarity scores using query and key vectors, the system computes a weighted sum of the value vectors. The weights for each value vector are determined by the similarity scores, ensuring that the final contextual representation is influenced more by relevant words.
+
+In summary, the three matrices - query, key, and value - play different roles in the self-attention mechanism. The query matrix helps focus on the word of interest, the key matrix measures relevance between words, and the value matrix provides the context that will be combined to create the final contextual representation of the focus word. Using these three matrices together enables the self-attention mechanism to effectively capture the relationships and dependencies between words in a sentence.
+
 ### Multi-headed attention
 If we think of an attention matrix as like a kernel matrix (as discussed in Section 15.4.2), it is natural
 to want to use multiple attention matrices, to capture different notions of similarity. This is the
