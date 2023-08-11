@@ -6,7 +6,7 @@ the decoder, thus eliminating the need for RNNs.
 We have seen that the decoder of an RNN could use attention to the input sequence in
 order to capture contexual embeddings of each input. However, rather than the decoder attending to
 the encoder, we can modify the model so the encoder attends to itself. This is called self attention.
-The self-ttention component helps the encoder comprehend its inputs by focusing on other parts of the input sequence that are relevant to each input element it processes.
+The self-attention component helps the encoder comprehend its inputs by focusing on other parts of the input sequence that are relevant to each input element it processes.
 At training time, all the outputs are already known, so we can evaluate the
 above function in parallel, overcoming the sequential bottleneck of using RNNs.
 In addition to improved speed, self-attention can give improved representations of context.<br>
@@ -79,12 +79,12 @@ their lack of relevant inductive bias. For more detail, please see the final dis
 16x16 patches, projects each patch into an embedding space, and then passes this set of embeddings
 $x_{1:T}$ to a transformer, analogous to the way word embeddings are passed to a transformer. The input
 is also prepended with a special [CLASS] embedding, $x_0$. The output of the transformer is a set of
-encodings $e_{0:T}$ ; the model maps e0 to the target class label $y$, and is trained in a supervised way.
+encodings $e_{0:T}$ ; the model maps $e_0$ to the target class label $y$, and is trained in a supervised way.
 
 After supervised pretraining, the model is fine-tuned on various downstream classification tasks,
 an approach known as transfer learning. When trained on “small”
 datasets such as ImageNet (which has 1k classes and 1.3M images), they find that they cannot
-outperform a pretrained CNN ResNet model known as BiT (big transfer) [Kol+20].
+outperform a pretrained CNN ResNet model known as BiT (big transfer).
 However, when trained on larger datasets, such as ImageNet-21k (with 21k classes and 14M images),
 or the Google-internal JFT dataset (with 18k classes and 303M images), they find that ViT does
 better than BiT at transfer learning. It is also cheaper to train than ResNet at this scale. (However,
