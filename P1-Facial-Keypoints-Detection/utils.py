@@ -14,7 +14,10 @@ def show_rand_img(dataset):
 
 def show_keypoints(image, key_pts):
     """Shows a given image with its corresponding keypoints"""
-    plt.imshow(image)
+    if image.shape[0]==1:
+        plt.imshow(image[0,:,:], cmap='gray')
+    else:
+        plt.imshow(image)
     plt.scatter(key_pts[:, 0], key_pts[:, 1], s=20, marker='.', c='m')
 
 
