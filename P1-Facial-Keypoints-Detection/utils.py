@@ -21,6 +21,8 @@ def show_keypoints(image, key_pts):
 def show_preprocessing_results(dataset, test_num=0):
     rescale = Rescale(50)
     crop = FaceCrop()
+    # transforms.Compose below will apply all of the 
+    # transformations sequentially on the input image
     composed = transforms.Compose([Rescale(250),
                                 FaceCrop(),
                                 Rescale(128),
