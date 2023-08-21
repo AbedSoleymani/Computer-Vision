@@ -14,16 +14,15 @@ def create_datasets(batch_size,
 
     train_transform = transforms.Compose([RandomRotate(5),
                                           RandomHorizontalFlip(),
-                                          ColorJitter(),
                                           FaceCrop(),
                                           Rescale((img_size,img_size)),
                                           Normalize(color=color),
                                           ToTensor()])
 
     test_transform = transforms.Compose([FaceCropTight(),
-                                          Rescale((img_size,img_size)),
-                                          Normalize(color=color),
-                                          ToTensor()])
+                                         Rescale((img_size,img_size)),
+                                         Normalize(color=color),
+                                         ToTensor()])
                 
     os.chdir("./P1-Facial-Keypoints-Detection/")
     train_dataset = FacialKeypointsDataset(csv_file='data/training_frames_keypoints.csv',
