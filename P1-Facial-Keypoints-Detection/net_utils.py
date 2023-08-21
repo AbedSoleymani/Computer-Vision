@@ -130,7 +130,7 @@ def train_net(net, n_epochs, img_size, batch_size, scheduler, criterion, optimiz
                     avg_train_loss = running_train_loss
                 else:
                     avg_train_loss = running_train_loss/10
-                avg_val_loss = validation_loss(valid_loader, net)
+                avg_val_loss = validation_loss(net, valid_loader, criterion)
                 train_loss_over_time.append(avg_train_loss)
                 val_loss_over_time.append(avg_val_loss)
                 #print(f'Epoch: {epoch + 1}, Batch: {batch_i+1}, Avg. Training Loss: {avg_train_loss:.5f}, Avg. Validation Loss: {avg_val_loss:.5f}')
