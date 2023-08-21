@@ -24,13 +24,12 @@ def create_datasets(batch_size,
                                          Normalize(color=color),
                                          ToTensor()])
                 
-    os.chdir("./P1-Facial-Keypoints-Detection/")
-    train_dataset = FacialKeypointsDataset(csv_file='data/training_frames_keypoints.csv',
-                                           root_dir='data/training/',
+    train_dataset = FacialKeypointsDataset(csv_file='./P1-Facial-Keypoints-Detection/data/training_frames_keypoints.csv',
+                                           root_dir='./P1-Facial-Keypoints-Detection/data/training/',
                                            transform=train_transform)
     
-    test_dataset = FacialKeypointsDataset(csv_file='data/test_frames_keypoints.csv',
-                                          root_dir='data/test/',
+    test_dataset = FacialKeypointsDataset(csv_file='./P1-Facial-Keypoints-Detection/data/test_frames_keypoints.csv',
+                                          root_dir='./P1-Facial-Keypoints-Detection/data/test/',
                                           transform=test_transform)
             
 
