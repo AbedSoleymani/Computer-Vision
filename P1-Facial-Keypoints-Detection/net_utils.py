@@ -133,13 +133,11 @@ def train_net(net, n_epochs, img_size, batch_size, scheduler, criterion, optimiz
                 avg_val_loss = validation_loss(net, valid_loader, criterion)
                 train_loss_over_time.append(avg_train_loss)
                 val_loss_over_time.append(avg_val_loss)
-                #print(f'Epoch: {epoch + 1}, Batch: {batch_i+1}, Avg. Training Loss: {avg_train_loss:.5f}, Avg. Validation Loss: {avg_val_loss:.5f}')
+                print(f'Epoch: {epoch + 1}, Batch: {batch_i+1}/{3462//batch_size}, Avg. Training Loss: {avg_train_loss:.5f}, Avg. Validation Loss: {avg_val_loss:.5f}')
                 running_train_loss = 0.0
         
         # reduce learning rate when avg_val_loss has stopped improving
         scheduler.step(avg_val_loss)
-        
-        print(f'Epoch: {epoch + 1}, Avg. Training Loss: {avg_train_loss:.5f}, Avg. Validation Loss: {avg_val_loss:.5f}')
         early_stopping(avg_val_loss, net)
         
         if early_stopping.early_stop:
@@ -149,8 +147,6 @@ def train_net(net, n_epochs, img_size, batch_size, scheduler, criterion, optimiz
             print("Early stopping")
             break
     
-    # load last checkpoint with the best model
-    net.load_state_dict(torch.load('saved_models/checkpoint.pt'))
     print('Finished Training')           
     return  train_loss_over_time, val_loss_over_time, epoch + 1
 
