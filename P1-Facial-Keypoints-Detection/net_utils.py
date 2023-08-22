@@ -188,16 +188,16 @@ def show_all_keypoints(image, predicted_key_pts, gt_pts=None):
     if gt_pts is not None:
         plt.scatter(gt_pts[:, 0], gt_pts[:, 1], s=20, marker='.', c='g')
 
-def visualize_output(test_images, test_outputs, gt_pts=None, num_imgs=10):
+def visualize_output(images, outputs, gt_pts, title: str, num_imgs=10):
     plt.figure(figsize=(20,10))
     for i in range(num_imgs):
         ax = plt.subplot(2, num_imgs//2, i+1)
 
-        image = test_images[i].data   # get the image from it's wrapper
+        image = images[i].data   # get the image from it's wrapper
         image = image.numpy()   # convert to numpy array from a Tensor
         image = np.transpose(image, (1, 2, 0))   # transpose to go from torch to numpy image
 
-        predicted_key_pts = test_outputs[i].data
+        predicted_key_pts = outputs[i].data
         predicted_key_pts = predicted_key_pts.numpy()
         '''undo normalization of keypoints''' 
         predicted_key_pts = predicted_key_pts*(image.shape[0]/4)+image.shape[0]/2
@@ -210,5 +210,5 @@ def visualize_output(test_images, test_outputs, gt_pts=None, num_imgs=10):
         show_all_keypoints(np.squeeze(image), predicted_key_pts, ground_truth_pts)
             
         plt.axis('off')
-
+    plt.suptitle(title)
     plt.show()
