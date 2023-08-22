@@ -1,42 +1,39 @@
-import glob
 import os
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import cv2
-from torchvision import transforms
+import torch
+import torch.nn as nn
+import torch.optim as optim 
+from torch.optim import lr_scheduler
 
 from generate_dataset import generate_dataset
-from utils import show_rand_img, show_keypoints, show_preprocessing_results
-from facial_keypoints_dataset import FacialKeypointsDataset
-from preprocessing import Rescale, RandomCrop, FaceCrop, Normalize, ToTensor, Random90DegFlip
-
-
+from net_utils import train_net
+from models import NaimishNet
+from gen_tr_val_ts_datasets import create_datasets
 
 os.system("clear")
 generate_dataset()
 
-os.chdir("./P1-Facial-Keypoints-Detection")
-face_dataset = FacialKeypointsDataset(csv_file='./data/training_frames_keypoints.csv',
-                                      root_dir='./data/training/',
-                                      transform=None)
+batch_size = 16
+img_size = 224
+n_epochs = 2
 
-# show_rand_img(dataset=face_dataset)
+train_loader, valid_loader, test_loader = create_datasets(batch_size=batch_size,
+                                                          img_size=img_size)
+net = NaimishNet(img_size, use_maxp=False)
 
-# show_preprocessing_results(dataset=face_dataset, test_num=0)
+criterion = nn.MSELoss() # Since it is actually a regression problem
+optimizer = optim.Adam(params = net.parameters())
+plateau_lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min',  patience=7, verbose=True)
 
-"""Now, we are ready to create a processed dataset suitable for training"""
-data_transform = transforms.Compose([Rescale(250),
-                                     RandomCrop(224),
-                                     Normalize(),
-                                     ToTensor()])
-transformed_dataset = FacialKeypointsDataset(csv_file='./data/training_frames_keypoints.csv',
-                                             root_dir='./data/training/',
-                                             transform=data_transform)
-
-"""Note that in the transformed dataset, facial keypoints
-belong into [-2, 2] and they do not match the image"""
-show_rand_img(dataset=transformed_dataset)
+train_loss, val_loss, epochs = train_net(net=net,
+                                        n_epochs=n_epochs,
+                                        img_size=img_size,
+                                        batch_size=batch_size,
+                                        scheduler=plateau_lr_scheduler,
+                                        criterion=criterion,
+                                        optimizer=optimizer)
 
 
+model_dir = './P1-Facial-Keypoints-Detection/saved_models/'
+model_name = 'abed_model_epochs'+str(n_epochs)
+
+torch.save(net.state_dict(), model_dir+model_name)
