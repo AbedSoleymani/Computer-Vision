@@ -11,7 +11,7 @@ train_loader, valid_loader, test_loader = create_datasets(batch_size=batch_size,
                                                           img_size=img_size)
 
 # You have to change the model_name parameter as well
-net = NaimishNet(img_size, use_maxp=False)
+# net = NaimishNet(img_size, use_maxp=False)
 net = resnet18_grayscale()
 
 test_images, test_outputs, gt_pts = net_sample_output(net=net,
@@ -22,10 +22,10 @@ visualize_output(images=test_images,
                  title="Before training")
 
 
-n_epochs = 2
+n_epochs = 5
 model_dir = './P1-Facial-Keypoints-Detection/saved_models/'
 # model_name = 'abed_model_epochs2'
-model_name = 'abed_resnet18_epochs2'
+model_name = 'abed_resnet18_epochs5'
 
 net.load_state_dict(torch.load(model_dir + model_name))
 test_images, test_outputs, gt_pts = net_sample_output(net=net,
