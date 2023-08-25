@@ -14,7 +14,7 @@ generate_dataset()
 
 batch_size = 64
 img_size = 224
-n_epochs = 2
+n_epochs = 10
 
 train_loader, valid_loader, test_loader = create_datasets(batch_size=batch_size,
                                                           img_size=img_size)
@@ -22,7 +22,7 @@ net = resnet18_grayscale()
 
 criterion = nn.MSELoss() # Since it is actually a regression problem
 optimizer = optim.Adam(params = net.parameters())
-plateau_lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min',  patience=7, verbose=True)
+plateau_lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min',  patience=20, verbose=True)
 
 train_loss, val_loss, epochs = train_net(net=net,
                                         n_epochs=n_epochs,
