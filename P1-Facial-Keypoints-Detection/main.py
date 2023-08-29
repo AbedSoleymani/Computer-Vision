@@ -12,13 +12,16 @@ from gen_tr_val_ts_datasets import create_datasets
 os.system("clear")
 generate_dataset()
 
+device = "mps" if torch.backends.mps.is_available() else "cpu"
+print(f"Using device: {device}")
+
 batch_size = 16
 img_size = 224
 n_epochs = 2
 
 train_loader, valid_loader, test_loader = create_datasets(batch_size=batch_size,
                                                           img_size=img_size)
-net = NaimishNet(img_size, use_maxp=False)
+net = NaimishNet(img_size, use_maxp=False).to(device)
 
 criterion = nn.MSELoss() # Since it is actually a regression problem
 optimizer = optim.Adam(params = net.parameters())
@@ -30,7 +33,8 @@ train_loss, val_loss, epochs = train_net(net=net,
                                         batch_size=batch_size,
                                         scheduler=plateau_lr_scheduler,
                                         criterion=criterion,
-                                        optimizer=optimizer)
+                                        optimizer=optimizer,
+                                        device=device)
 
 
 model_dir = './P1-Facial-Keypoints-Detection/saved_models/'
