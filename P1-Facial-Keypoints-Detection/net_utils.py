@@ -15,7 +15,7 @@ def init_weights(layer):
 
 # Test the net ona all test images and return average loss
 
-def validation_loss(net, valid_loader, criterion):
+def validation_loss(net, valid_loader, criterion, device):
     net.eval()
     loss = 0.0
     running_loss = 0.0
@@ -28,8 +28,8 @@ def validation_loss(net, valid_loader, criterion):
         key_pts = key_pts.view(key_pts.size(0), -1)
                 
         # convert variables to floats for regression loss
-        key_pts = key_pts.type(torch.FloatTensor)
-        images = images.type(torch.FloatTensor)
+        key_pts = key_pts.type(torch.FloatTensor).to(device)
+        images = images.type(torch.FloatTensor).to(device)
 
         output_pts = net(images)
         
@@ -75,7 +75,7 @@ class EarlyStopping:
         self.val_loss_min = val_loss
 
 
-def train_net(net, n_epochs, img_size, batch_size, scheduler, criterion, optimizer):
+def train_net(net, n_epochs, img_size, batch_size, scheduler, criterion, optimizer, device):
     
     train_loader, test_loader, valid_loader = create_datasets(batch_size,img_size)
     
@@ -104,8 +104,8 @@ def train_net(net, n_epochs, img_size, batch_size, scheduler, criterion, optimiz
             key_pts = key_pts.view(key_pts.size(0), -1)
 
             # convert variables to floats for regression loss
-            key_pts = key_pts.type(torch.FloatTensor)
-            images = images.type(torch.FloatTensor)
+            key_pts = key_pts.type(torch.FloatTensor).to(device)
+            images = images.type(torch.FloatTensor).to(device)
 
             # forward pass to get outputs
             output_pts = net(images)
@@ -130,7 +130,7 @@ def train_net(net, n_epochs, img_size, batch_size, scheduler, criterion, optimiz
                     avg_train_loss = running_train_loss
                 else:
                     avg_train_loss = running_train_loss/10
-                avg_val_loss = validation_loss(net, valid_loader, criterion)
+                avg_val_loss = validation_loss(net, valid_loader, criterion, device)
                 train_loss_over_time.append(avg_train_loss)
                 val_loss_over_time.append(avg_val_loss)
                 print(f'Epoch: {epoch + 1}, Batch: {batch_i+1}/{3462//batch_size}, Avg. Training Loss: {avg_train_loss:.5f}, Avg. Validation Loss: {avg_val_loss:.5f}')
