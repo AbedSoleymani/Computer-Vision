@@ -26,19 +26,22 @@ class PatchEmbeding(nn.Module):
         Convolutional layer that does both the splitting into patches
         and their embedding.
     """
-    def __init__(self, img_size, patch_size, in_chans=3, embed_dim=768):
+    def __init__(self,
+                 img_size,
+                 patch_size,
+                 in_chans=3,
+                 embed_dim=768):
+        
         super(PatchEmbeding, self).__init__()
         self.img_size = img_size
         self.patch_size = patch_size
         self.n_patches = (img_size // patch_size) ** 2
 
 
-        self.proj = nn.Conv2d(
-                in_chans,
-                embed_dim,
-                kernel_size=patch_size,
-                stride=patch_size,
-        )
+        self.proj = nn.Conv2d(in_chans,
+                              embed_dim,
+                              kernel_size=patch_size,
+                              stride=patch_size)
 
     def forward(self, x):
         """
