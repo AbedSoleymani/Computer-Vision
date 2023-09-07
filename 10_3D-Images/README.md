@@ -1,0 +1,1 @@
+In this repository, we will work with 3D data, which includes meshes and point clouds sourced from the ShapeNet dataset. Our focus will be on developing code to visualize this particular type of visual data and to train models, with a specific emphasis on PointNet, for tasks such as object classification and detection.
