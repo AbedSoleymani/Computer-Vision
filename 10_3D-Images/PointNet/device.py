@@ -1,7 +1,7 @@
 import torch
 
 """
-Defining the device parameter as a global parameter across
+Defining the device parameter ('mps' or 'cpu') as a global parameter across
 different moduls by:
     import device
 at the begining of each modul and having the global variable as:
