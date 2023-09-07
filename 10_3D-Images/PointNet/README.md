@@ -1,0 +1,2 @@
+# PointNet classifier
+PointNet classifier implementation on ShapeNet dataset utilizing Metal Shade Performance (`mps` device) of Apple Silicon M1. The model will dentify objects based on their point cloud (`1024`` 3D points) data.
