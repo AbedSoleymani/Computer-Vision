@@ -30,6 +30,14 @@ If we think of an attention matrix as like a kernel matrix (as discussed in Sect
 to want to use multiple attention matrices, to capture different notions of similarity. This is the
 basic idea behind multi-headed attention (MHA).
 
+In MHA, we use layer nomalization instead of batch normalization. This is because BN results in bad performance in transformers. Here are some reasons:
+
+1. **Sequence Length Variability**: In NLP tasks, the length of input sequences can vary. Since BN normalizes across the batch dimension, when the sequence length varies, it can lead to issues. For instance, if sequences are padded to a certain length, the normalization might not be effective for shorter sequences, and vice versa.
+2. **Autoregressive Nature of Transformers**: Transformers, especially in autoregressive models where each token is generated one at a time, may not benefit significantly from batch normalization. The statistics used for normalization across the batch dimension might not be consistent across different positions in the sequence. When Batch Normalization (BN) is applied to the input of each layer in a neural network, it normalizes the activations by the mean and standard deviation calculated over the entire batch dimension. In the context of transformers, which are commonly used for natural language processing (NLP) tasks, positional information is typically added to the input embeddings to encode the position of each token in the sequence.
+The positional information is crucial for transformers to understand the order and relationships between different tokens. However, when BN is applied to the entire batch, it doesn't differentiate between tokens at different positions. The positional encodings, which are part of the input, are affected by the normalization process.
+This can lead to a loss of positional information, as the mean and standard deviation calculated by BN treat positional encodings as just another set of features without considering their special role in encoding position. In essence, BN assumes that the statistics it computes over the batch dimension are equally applicable to all positions in the sequence, which might not be the case when dealing with positional encodings.
+To preserve positional information better, layer normalization or other normalization techniques that operate independently on each position in the sequence may be preferred over BN in transformer architectures for NLP tasks. Layer normalization normalizes each position independently, making it more suitable for tasks where positional information is crucial.
+
 ### Positional encoding
 The performance of “vanilla” self-attention can be low, since attention is _permutation invariant_, and
 hence ignores the input word ordering. To overcome this, we can concatenate the word embeddings
