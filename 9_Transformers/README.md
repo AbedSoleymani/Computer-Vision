@@ -26,7 +26,7 @@ The self-attention mechanism uses three matrices - query (Q), key (K), and value
 In summary, the three matrices - query, key, and value - play different roles in the self-attention mechanism. The query matrix helps focus on the word of interest, the key matrix measures relevance between words, and the value matrix provides the context that will be combined to create the final contextual representation of the focus word. Using these three matrices together enables the self-attention mechanism to effectively capture the relationships and dependencies between words in a sentence.
 
 ### Multi-headed attention
-If we think of an attention matrix as like a kernel matrix (as discussed in Section 15.4.2), it is natural
+If we think of an attention matrix as like a kernel matrix, it is natural
 to want to use multiple attention matrices, to capture different notions of similarity. This is the
 basic idea behind multi-headed attention (MHA).
 
