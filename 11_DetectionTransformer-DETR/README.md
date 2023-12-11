@@ -1,2 +1,2 @@
 # End-to-End Object Detection with Transformers (DETR)
-This approach streamlines the detection pipeline, e ectively removing the need for many hand-designed components like a non-maximum suppression procedure or anchor generation that explicitly encode our prior knowledge about the task.
+This approach streamlines the detection pipeline, effectively removing the need for many hand-designed components like a non-maximum suppression procedure or anchor generation that explicitly encode our prior knowledge about the task.
