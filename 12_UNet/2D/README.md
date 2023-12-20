@@ -8,7 +8,6 @@ Explore the UNET architecture for image segmentation in this repository. UNET, a
 
 - [UNET Architecture](#unet-architecture)
 - [Training](#training)
-- [Applications](#applications)
 - [FAQs](#faqs)
 
 ## UNET Architecture
@@ -25,3 +24,5 @@ Due to the unpadded convolutions, the output image is smaller than the input by 
 To minimize the overhead and make maximum use of the GPU memory, we favor large input tiles over a large batch size and hence **reduce the batch to a single image**. Accordingly we use a **high momentum** (0.99) such that a large number of the previously seen training samples determine the update in the current optimization step.
 
 **Data augmentation** is essential to teach the network the desired invariance and robustness properties, when only few training samples are available. In case of medical images, we primarily need shift and rotation invariance as well as robustness to deformations and gray value variations. Especially random elas- tic deformations of the training samples seem to be the key concept to train a segmentation network with very few annotated images. We generate smooth deformations using random displacement vectors on a coarse 3 by 3 grid. The displacements are sampled from a Gaussian distribution with 10 pixels standard deviation. Per-pixel displacements are then computed using bicubic interpola- tion. Drop-out layers at the end of the contracting path perform further implicit data augmentation.
+
+## FAQs
