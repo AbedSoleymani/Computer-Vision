@@ -75,20 +75,23 @@ class UNet(nn.Module):
                                     kernel_size=1)
         
     def forward(self, x):
-        self.skip_connections = []
+        skip_connections = []
         
         for down_block in self.contracting_path:
             x = down_block(x)
-            self.skip_connections.append(x)
+            skip_connections.append(x)
             x = self.pooling(x)
 
         x = self.bottleneck(x)
+
+        # Now, we reverse the `skip_connection` list since we are going from down to up in expanding path.
+        skip_connections = skip_connections[::-1]
 
         # While creating `self.expanding_path`, we appened two processing to the input
         # That is why we use step of two in the next line of code.
         for idx in range(0, len(self.expanding_path), 2):
             x = self.expanding_path[idx](x)
-            skip_connection = self.skip_connections[idx//2]
+            skip_connection = skip_connections[idx//2]
 
             # The next two lines are for the case that the input image shape is not perfectly 
             # devisible by 16 and it will make a size mismatch while concatenating x and skip_connection
@@ -99,3 +102,14 @@ class UNet(nn.Module):
             x = self.expanding_path[idx+1](concat_skip)
 
         return self.final_conv(x)
+    
+def test():
+    x = torch.randn((3, 1, 160, 160))
+    model = UNet(in_channels=1, out_channels=1)
+    preds = model(x)
+    print (preds.shape)
+    print (x.shape)
+    assert preds.shape == x.shape
+
+if __name__ == "__main__":
+    test()
