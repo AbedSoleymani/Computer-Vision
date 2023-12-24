@@ -12,7 +12,9 @@ class CarvanaDataset(Dataset):
         self.image_dir = image_dir
         self.mask_dir = mask_dir
         self.transform = transform
-        self.images = os.listdir(image_dir)
+        """Next line of code is for disregarding `.DS_Store` in Mac"""
+        self.images = [filename for filename in os.listdir(image_dir) if filename != '.DS_Store']
+
 
     def __len__(self):
 
@@ -27,6 +29,7 @@ class CarvanaDataset(Dataset):
 
         mask[mask == 255.0] = 1.0 # making the mask binary for the softmax output of the network
 
+        # The same transformation from the `albumentations` library will be applied on images and masks.
         if self.transform is not None:
             augmentations = self.transform(image=image, mask=mask)
             image = augmentations["image"]
