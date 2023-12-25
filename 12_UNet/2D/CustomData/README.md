@@ -9,7 +9,7 @@ Ground truth:
 Model's output:
 ![pred_1](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/1cbfc970-c786-4292-9424-ace3d5866520)
 
-Below is an example of semantic segmentation conducted by the implemented network on the DRIVE dataset after 30 epochs. Notably, the model excels in segmenting thicker blood vessels, but encounters difficulty in detecting smaller ones, treating them as image noise. This challenge may arise from the low resolution of the input images.
+Below is an example of semantic segmentation performed by the implemented network on the DRIVE dataset after 30 epochs. Remarkably, the model excels at segmenting thicker blood vessels but faces challenges in detecting tiny ones, treating them as image noise. This difficulty may arise from factors such as the low resolution of the image, the small size of the training set (20 samples), the potential loss of tiny features in the contracting path, or the shallowness of the model.
 ![combined_image](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/8b38d857-7d87-4448-be42-d3fe1107f540)
 ![0](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/04dc23fe-2423-464a-9383-0bcb840461d6)
 ![pred_0](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/e04cc6ff-5a18-4b5e-9947-53587e8ba467)
