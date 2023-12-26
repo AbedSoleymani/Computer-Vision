@@ -98,6 +98,8 @@ This preference is due to the numerical stability and efficiency of the training
 
 The image segmentation task is a good example of imbalance classes classification problem. The number of background pixels is usually significantly larger than the number of object pixels. Therefore, weighted binary cross-entropy or focal loss are good choices for the object segmentation loss function.
 
+In scenarios involving the segmentation of multiple classes of objects, categorical cross-entropy loss is a commonly used metric. To address imbalancies within the dataset, weighted categorical cross-entropy loss can be employed. This approach helps the model give appropriate emphasis to underrepresented classes (objects with small masks) during training, to improve the overall performance on diverse datasets.
+
 2. **Dice Loss (F1 Score Loss):**
    This is a widely-used loss to calculate the similarity between images (i.e., measuring the overlap between predicted and target segmentation masks) and is similar to the Intersection-over-Union heuristic which will be explained in the next item.
    A common criticism is the nature of its resulting search space, which is non-convex, several modifications have been made to make the Dice Loss more tractable for solving using methods such as L-BFGS and Stochastic Gradient Descent. 
@@ -132,3 +134,19 @@ $$
 $$
 
 where $\gamma$ is the focusing parameter, $\hat{y}_i$ is the predicted probability, and $y_i$ is the ground truth label for the $i$-th pixel.
+
+```python
+pip install focal-loss-pytorch
+...
+from focal_loss_pytorch.focal_loss_pytorch.focal_loss import BinaryFocalLoss
+...
+loss_fn = BinaryFocalLoss(gamma=3)
+...
+# Training loop
+    ...
+    loss = loss_fn(output_img, ref_img)
+    optimizer.zero_grad()
+    ...
+```
+5. **Shape-Aware Loss:**
+  Shape-aware loss considers shape information in image segmentation, aiming to improve the spatial accuracy and alignment with the expected shapes of objects in segmentation masks. Unlike traditional loss functions such as pixel-wise cross-entropy loss that focus solely on spatial alignment, shape-aware loss calculates the average point-to-curve Euclidean distance around the predicted segmentation curve to the ground truth. This distance is then used as a coefficient in conjunction with the cross-entropy loss function.
