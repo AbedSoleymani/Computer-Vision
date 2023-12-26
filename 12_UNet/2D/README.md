@@ -78,3 +78,51 @@ A: The UNet architecture is well-suited for handling multi-class image segmentat
 One challenge of multi-class image segmentation is the imbalanced distribution of classes in the training data. For example, if multiple classes of objects exist in the image, some classes may be much more common than others. This can lead to bias in the model, as it may be more accurate at predicting the more common classes and less accurate at predicting the less common classes. To address this issue, it may be necessary to balance the training data by oversampling the less common classes or using data augmentation techniques.
 
 Another challenge of multi-class image segmentation is handling class overlap, where pixels may belong to multiple classes. For example, in a medical image segmentation task, the boundary between two organs may be difficult to distinguish, as the pixels in this region may belong to both organs. To address this issue, it may be necessary to use a model capable of producing a probabilistic segmentation map, where each pixel is assigned a probability of belonging to each class.
+
+### Q: Loss Functions
+A: Image segmentation can be viewed as a pixel-level classification task, and the selection of the loss function plays a crucial role in influencing both the convergence speed of a machine learning model and its overall performance. Here, we will focus on commonly-used loss functions for semantic image segmentation tasks.
+1. **Binary Cross-Entropy:** Cross-entropy is a similarity metric to tell how close one distribution of random events are to another, and is used for both classification as well as segmentation.
+The binary cross-entropy (BCE) loss therefore attempts to measure the differences of information content between the actual and predicted image masks. It is more generally based on the Bernoulli distribution, and works best with equal data-distribution amongst classes (i.e., balanced data set). In other terms, image masks with very heavy class imbalance (such as in finding very small, rare tumors from X-ray images) may not be adequately evaluated by BCE.
+This is due to the fact that the BCE treats both mask (1) and background (0) equally. Since there may be an unequal distribution of pixels that represent a given object and the rest of the image, the BCE loss may not effectively represent the performance of the deep-learning model.
+BCE loss is defined as follows:
+
+
+$$
+\mathcal{L}_{\text{BCE}}(\hat{y}, y) = - \frac{1}{N} \sum _{i=1}^N \left[ y_i \cdot \log(\hat{y}_i) + (1 - y_i) \cdot \log(1 - \hat{y}_i) \right]
+$$
+
+  Here, $N$ is the number of pixels, $\hat{y}_i$ is the predicted probability for pixel $i$, and $y_i$ is the ground truth label for pixel $i$.
+
+  In the implementation in folder `CustomDataset`, we used `BCEWithLogitsLoss`. `BCEWithLogitsLoss` applies Sigmoid activation over the final layer and then calculates the nn.BCELoss.
+It is often preferred over applying a Sigmoid activation in the model and then using nn.BCELoss.
+This preference is due to the numerical stability and efficiency of the training procedure.
+
+The image segmentation task is a good example of imbalance classes classification problem. The number of background pixels is usually significantly larger than the number of object pixels. Therefore, weighted binary cross-entropy or focal loss are good choices for the object segmentation loss function.
+
+2. **Dice Loss (F1 Score Loss):**
+   This is a widely-used loss to calculate the similarity between images (i.e., measuring the overlap between predicted and target segmentation masks) and is similar to the Intersection-over-Union heuristic which will be explained in the next item.
+   A common criticism is the nature of its resulting search space, which is non-convex, several modifications have been made to make the Dice Loss more tractable for solving using methods such as L-BFGS and Stochastic Gradient Descent. 
+
+```python
+def dice_loss(y_true, y_pred):
+    smooth = 1.0  # to avoid division by zero
+    intersection = torch.sum(y_true * y_pred)
+    union = torch.sum(y_true) + torch.sum(y_pred)
+    dice = (2.0 * intersection + smooth) / (union + smooth)
+    return 1.0 - dice  # because it is a loss!
+```
+
+3. **Jaccard Loss (Intersection over Union Loss):**
+  Measures the ratio of the intersection area to the union area of predicted and target masks and is very similar to Dice Loss.
+IoU loss typically converges slower than BCE loss, but is more informative and meaningful for semantic segmentation application.
+
+```python
+def IoU_loss(y_true, y_pred):
+    smooth = 1.0
+    intersection = torch.sum(y_true * y_pred)
+    union = torch.sum(y_true) + torch.sum(y_pred)
+    IoU = (intersection + smooth) / (tunion - intersection + smooth)
+    return -IoU  # because it is a loss!
+```
+
+4. **Focal Loss:** Focal loss technique is employed to address the class imbalance problem in classification tasks. Focal loss applies a modulating term to the cross entropy loss in order to focus learning on hard misclassified examples (e.g., 'wolf' and 'dog' classes in a dataset which has three classes of 'airplane', 'wolf', and 'dog'). It is a dynamically scaled cross entropy loss, where the scaling factor decays to zero as confidence in the correct class increases. It is suitable for multiclass classification where some classes are easy and other difficult to classify.
