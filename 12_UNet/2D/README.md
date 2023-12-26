@@ -86,7 +86,6 @@ The binary cross-entropy (BCE) loss therefore attempts to measure the difference
 This is due to the fact that the BCE treats both mask (1) and background (0) equally. Since there may be an unequal distribution of pixels that represent a given object and the rest of the image, the BCE loss may not effectively represent the performance of the deep-learning model.
 BCE loss is defined as follows:
 
-
 $$
 \mathcal{L}_{\text{BCE}}(\hat{y}, y) = - \frac{1}{N} \sum _{i=1}^N \left[ y_i \cdot \log(\hat{y}_i) + (1 - y_i) \cdot \log(1 - \hat{y}_i) \right]
 $$
@@ -125,4 +124,11 @@ def IoU_loss(y_true, y_pred):
     return -IoU  # because it is a loss!
 ```
 
-4. **Focal Loss:** Focal loss technique is employed to address the class imbalance problem in classification tasks. Focal loss applies a modulating term to the cross entropy loss in order to focus learning on hard misclassified examples (e.g., 'wolf' and 'dog' classes in a dataset which has three classes of 'airplane', 'wolf', and 'dog'). It is a dynamically scaled cross entropy loss, where the scaling factor decays to zero as confidence in the correct class increases. It is suitable for multiclass classification where some classes are easy and other difficult to classify.
+4. **Focal Loss:** Focal loss technique is employed to address the class imbalance problem in classification tasks. Focal loss applies a modulating term to the cross entropy loss in order to focus learning on hard misclassified examples (e.g., 'wolf' and 'dog' classes in a dataset which has three classes of 'airplane', 'wolf', and 'dog'). It is a dynamically scaled cross entropy loss, where the scaling factor decays to zero as confidence in the correct class increases. It is suitable for multiclass classification where some classes are easy and other difficult to classify. Focal loss will be useful for multi-class image segmentation tasks in which we might have some classes with small regions.
+Focal loss is defined as follows:
+
+$$
+\mathcal{L}_{\text{FL}}(\hat{y}, y) = - \frac{1}{N} \sum _{i=1}^N \left[ y_i \cdot (1 - \hat{y}_i)^\gamma \cdot \log(\hat{y}_i) + (1 - y_i) \cdot \hat{y}_i^\gamma \cdot \log(1 - \hat{y}_i) \right]
+$$
+
+where $\gamma$ is the focusing parameter, $\hat{y}_i$ is the predicted probability, and $y_i$ is the ground truth label for the $i$-th pixel.
