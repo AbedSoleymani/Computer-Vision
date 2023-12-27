@@ -16,7 +16,7 @@ print(device)
 os.makedirs("./12_UNet/2D/CustomData/checkpoints/", exist_ok=True)
 os.makedirs("./12_UNet/2D/CustomData/saved_images/", exist_ok=True)
 
-learning_rate = 5e-5
+learning_rate = 1e-4
 batch_size = 5
 num_epochs = 20
 image_height = 512
