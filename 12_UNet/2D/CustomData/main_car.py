@@ -52,22 +52,21 @@ train_loader, val_loader = get_loaders(train_dir=train_img_dir,
 if load_model:
     load_checkpoint(torch.load("./12_UNet/2D/CustomData/checkpoints/checkpoint.pth.tar"), model)
 
-check_accuracy(val_loader, model, device=device)
+dice_buffer = check_accuracy(val_loader, model, device=device)
 
 for epoch in range(num_epochs):
     train_fn(train_loader, model, optimizer, loss_fn, device)
 
-    # save model
-    checkpoint = {
-        "state_dict": model.state_dict(),
-        "optimizer":optimizer.state_dict(),
-    }
-    save_checkpoint(checkpoint)
+    dice_score = check_accuracy(val_loader, model, device=device)
 
-    # check accuracy
-    check_accuracy(val_loader, model, device=device)
+    if dice_score > dice_buffer:
+        checkpoint = {
+            "state_dict": model.state_dict(),
+            "optimizer":optimizer.state_dict(),
+        }
+        save_checkpoint(checkpoint, filename="./12_UNet/2D/CustomData/checkpoints/checkpoint.pth.tar")
+        dice_buffer = dice_score
 
-    # print some examples to a folder
     save_predictions_as_imgs(val_loader, model, folder="./12_UNet/2D/CustomData/saved_images/", device=device)
 
 
