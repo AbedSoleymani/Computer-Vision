@@ -57,6 +57,8 @@ def check_accuracy(loader, model, device):
     )
     print(f"Dice score: {dice_score/len(loader)}")
     model.train()
+    
+    return dice_score/len(loader)
 
 def save_predictions_as_imgs(loader, model, folder, device):
     model.eval()
