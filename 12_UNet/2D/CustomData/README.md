@@ -9,12 +9,18 @@ Ground truth:
 Model's output:
 ![pred_1](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/1cbfc970-c786-4292-9424-ace3d5866520)
 
-Below is an example of semantic segmentation performed by the implemented network on the DRIVE dataset after 30 epochs. Remarkably, the model excels at segmenting thicker blood vessels but faces challenges in detecting tiny ones, treating them as image noise. This difficulty may arise from factors such as the low resolution of the image, the small size of the training set (20 samples), the potential loss of tiny features in the contracting path, or the shallowness of the model.
+Below is an example of semantic segmentation performed by the implemented network on the DRIVE dataset after $30$ epochs for `512x512` images. Remarkably, the model excels at segmenting thicker blood vessels but faces challenges in detecting tiny ones, treating them as image noise. This difficulty may arise from factors such as the low resolution of the image, the small size of the training set (20 samples), the potential loss of tiny features in the contracting path, or the shallowness of the model.
 ![combined_image](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/8b38d857-7d87-4448-be42-d3fe1107f540)
 ![0](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/04dc23fe-2423-464a-9383-0bcb840461d6)
 ![pred_0](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/e04cc6ff-5a18-4b5e-9947-53587e8ba467)
 
+Below is an example of semantic segmentation performed by the ResUNet on the DRIVE dataset. To convert the original UNet architecture to its residual version, set the `residual` variable to `True` as follows:
+```python
+model = UNet(in_channels=3, out_channels=1, residual=True).to(device)
+```
+It was observed that ResUNet achieved a slightly better Dice score compared to the vanilla one after $30$ epochs for the same `256x256` input images. The following images showcase examples of the model's performance on `256x256` images:
+![combined_image](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/ad92090b-e662-43a6-8aea-b2b6ff48849c)
+![0](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/25cd4863-57e6-4893-ad0b-69d9046dc0b7)
+![pred_0](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/e69b50b0-92b7-45f9-b46e-216fa28db5ab)
 
-
-
-
+As shown in the images, due to the lower resolution, the quality of details in `256x256` images is lower than in `512x512` inputs, despite the slightly higher Dice score (Dice scores: $0.68$ and $0.63$, respectively).
