@@ -150,3 +150,15 @@ loss_fn = BinaryFocalLoss(gamma=3)
 ```
 5. **Shape-Aware Loss:**
   Shape-aware loss considers shape information in image segmentation, aiming to improve the spatial accuracy and alignment with the expected shapes of objects in segmentation masks. Unlike traditional loss functions such as pixel-wise cross-entropy loss that focus solely on spatial alignment, shape-aware loss calculates the average point-to-curve Euclidean distance around the predicted segmentation curve to the ground truth. This distance is then used as a coefficient in conjunction with the cross-entropy loss function.
+
+### Q: Variations of UNet.
+After introducing the vanilla UNet in 2015, researchers made modifications to the original UNet design to address specific challenges, improve performance, or adapt it to different applications. These variations may include changes in network depth, the addition of attention mechanisms, incorporation of residual connections, or other architectural enhancements. Two important modifications are ResUNet and Attention UNet, which will be explained below.
+1. **ResUNet:** It is a variation of UNet that incorporates residual connections within the architecture. These residual connections can help to alleviate the vanishing gradient problem and improve the overall performance of the network.
+<div align="center">
+<img width="600" alt="image" src="https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/ed522882-704e-45be-a0f5-4ae18ec7b3d6">
+<div align="left">
+
+2. **Attention UNet:** It is an extension of UNet that incorporates attention mechanisms to better focus on the important regions of the input image. Attention mechanisms can help the network to learn more fine-grained features and improve the overall segmentation quality.
+<div align="center">
+<img width="700" alt="image" src="https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/ca431809-d3be-4265-8184-72d04b34ca19">
+<div align="left">
