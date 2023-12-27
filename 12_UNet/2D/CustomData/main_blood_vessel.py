@@ -16,19 +16,18 @@ print(device)
 os.makedirs("./12_UNet/2D/CustomData/checkpoints/", exist_ok=True)
 os.makedirs("./12_UNet/2D/CustomData/saved_images/", exist_ok=True)
 
-learning_rate = 1e-8
+learning_rate = 5e-5
 batch_size = 5
-num_epochs = 10
-image_height = 256
-image_width = 256
+num_epochs = 20
+image_height = 512
+image_width = image_height
 load_model = True
 train_img_dir = "./12_UNet/2D/CustomData/RetinalBloodVessels/train_images/"
 train_mask_dir = "./12_UNet/2D/CustomData/RetinalBloodVessels/train_masks/"
 val_img_dir = "./12_UNet/2D/CustomData/RetinalBloodVessels/val_images/"
 val_mask_dir = "./12_UNet/2D/CustomData/RetinalBloodVessels/val_masks/"
 
-
-model = UNet(in_channels=3, out_channels=1).to(device)
+model = UNet(in_channels=3, out_channels=1, residual=True).to(device)
 
 """
 `BCEWithLogitsLoss` applies Sigmoid activation over the final layer and calculates the nn.BCELoss.
@@ -50,37 +49,23 @@ train_loader, val_loader = get_loaders(train_dir=train_img_dir,
                                     train_transform=train_transform,
                                     val_transform=val_transform)
 
-# import numpy as np
-# import matplotlib.pyplot as plt
-
-# for batch_idx, (data, targets) in enumerate(val_loader):
-#     data = data.numpy()
-#     targets = targets.numpy()
-#     print(targets.shape)
-#     print(np.max(targets))
-#     break
-
-# plt.imshow(targets[0,:,:], cmap='gray')  # 'gray' colormap for black-and-white
-# plt.show()
-
 if load_model:
     load_checkpoint(torch.load("./12_UNet/2D/CustomData/checkpoints/retina_checkpoint.pth.tar"), model)
 
-check_accuracy(val_loader, model, device=device)
+dice_buffer = check_accuracy(val_loader, model, device=device)
 
 for epoch in range(num_epochs):
     print("epoch: ", epoch+1)
     train_fn(train_loader, model, optimizer, loss_fn, device)
 
-    # save model
-    checkpoint = {
-        "state_dict": model.state_dict(),
-        "optimizer":optimizer.state_dict(),
-    }
-    save_checkpoint(checkpoint, filename="./12_UNet/2D/CustomData/checkpoints/retina_checkpoint.pth.tar")
+    dice_score = check_accuracy(val_loader, model, device=device)
 
-    # check accuracy
-    check_accuracy(val_loader, model, device=device)
+    if dice_score > dice_buffer:
+        checkpoint = {
+            "state_dict": model.state_dict(),
+            "optimizer":optimizer.state_dict(),
+        }
+        save_checkpoint(checkpoint, filename="./12_UNet/2D/CustomData/checkpoints/retina_checkpoint.pth.tar")
+        dice_buffer = dice_score
 
-    # print some examples to a folder
     save_predictions_as_imgs(val_loader, model, folder="./12_UNet/2D/CustomData/Retina_saved_images/", device=device)
