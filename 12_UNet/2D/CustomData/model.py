@@ -10,43 +10,47 @@ import torch.nn as nn
 import torchvision.transforms.functional as F
 
 class DoubleConv(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, residual=False):
+        self.residual = residual
         super(DoubleConv, self).__init__()
-        self.block = nn.Sequential(
-            nn.Conv2d(in_channels=in_channels,
-                      out_channels=out_channels,
-                      kernel_size=3,
-                      stride=1,
-                      padding=1, # to make it the same convolution
-                      bias=False, # Because we want to use BN in the next layer
-                      ),
-            nn.BatchNorm2d(out_channels),
-
-            # When `inplace`  in `ReLU` is set to `True`, it means that the output tensor will be written
-            # to the same memory location as the input tensor, overwriting the values in the input tensor.
-            nn.ReLU(inplace=True),
-
-            nn.Conv2d(in_channels=out_channels, # The second conv in the block does not change the depth
-                      out_channels=out_channels,
-                      kernel_size=3,
-                      stride=1,
-                      padding=1, # to make it the same convolution
-                      bias=False, # Because we want to use BN in the next layer
-                      ),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True)
-        )
+        self.conv1 = nn.Conv2d(in_channels=in_channels,
+                               out_channels=out_channels,
+                               kernel_size=3,
+                               stride=1,
+                               padding=1,
+                               bias=False)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.conv2 = nn.Conv2d(in_channels=out_channels,
+                               out_channels=out_channels,
+                               kernel_size=3,
+                               stride=1,
+                               padding=1,
+                               bias=False)
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU(inplace=True)
     
     def forward(self, x):
-        return self.block(x)
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+        residual = out
+        out = self.conv2(out)
+        out = self.bn2(out)
+        out = self.relu(out)
+
+        if self.residual:
+            return out + residual
+        else:
+            return out
     
 
 class UNet(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
-                 features=[64, 128, 256, 512]):
-        
+                 features=[64, 128, 256, 512],
+                 residual=False):
+        self.residual = residual
         super(UNet, self).__init__()
         self.contracting_path = nn.ModuleList()
         self.expanding_path = nn.ModuleList()
@@ -55,7 +59,8 @@ class UNet(nn.Module):
         # Contracting path of the UNet
         for feature in features:
             self.contracting_path.append(DoubleConv(in_channels=in_channels,
-                                                    out_channels=feature))
+                                                    out_channels=feature,
+                                                    residual=self.residual))
             in_channels = feature
 
         # Expanding path of the UNet
@@ -65,10 +70,12 @@ class UNet(nn.Module):
                                                           kernel_size=2,
                                                           stride=2))
             self.expanding_path.append(DoubleConv(in_channels=feature*2,
-                                                  out_channels=feature))
+                                                  out_channels=feature,
+                                                  residual=self.residual))
             
         self.bottleneck = DoubleConv(in_channels=features[-1],
-                                     out_channels=features[-1]*2)
+                                     out_channels=features[-1]*2,
+                                     residual=self.residual)
         
         self.final_conv = nn.Conv2d(in_channels=features[0],
                                     out_channels=out_channels,
