@@ -10,6 +10,13 @@ saved_models
 video
 checkpoints
 
+# these are for UNet
+RetinalBloodVessels
+train_images
+train_masks
+val_images
+val_masks
+
 ################
 # Default ones!
 ################
