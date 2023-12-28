@@ -8,6 +8,7 @@ saved_models
 yolov3.weights
 saved_models
 video
+checkpoints
 
 ################
 # Default ones!
