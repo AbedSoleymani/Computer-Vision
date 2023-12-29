@@ -1,5 +1,9 @@
 import torch
 import torchvision
+import torchvision.transforms.functional as F
+from PIL import Image
+import matplotlib.pyplot as plt
+from torchvision.utils import make_grid
 from dataset import CarvanaDataset
 from torch.utils.data import DataLoader
 
@@ -73,3 +77,27 @@ def save_predictions_as_imgs(loader, model, folder, device):
         torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
 
         model.train()
+
+def plot_attention_map_grid(attention_maps, num_rows, num_columns, x_label=None, y_label=None):
+    fig, axs = plt.subplots(num_rows, num_columns, figsize=(15, 3))
+    plt.subplots_adjust(wspace=0.05, hspace=-0.21)  # Adjust spacing between subplots
+
+    for i in range(num_rows):
+        for j in range(num_columns):
+            index = i * num_columns + j
+            ax = axs[i, j]
+
+            if len(attention_maps[index].shape) == 2:
+                im = ax.imshow(attention_maps[index], cmap='RdBu_r', interpolation='nearest', aspect='auto')
+            else:
+                im = ax.imshow(attention_maps[index][0], cmap='RdBu_r', interpolation='nearest', aspect='auto')
+
+            # Set axes with equal metrics
+            ax.set_aspect('equal')
+            ax.axis('off')  # Turn off axis labels and ticks
+
+    # Add a smaller colorbar to the right of the grid
+    cbar_ax = fig.add_axes([0.95, 0.15, 0.01, 0.7])  # [left, bottom, width, height]
+    cbar = fig.colorbar(im, cax=cbar_ax)
+
+    plt.show()
