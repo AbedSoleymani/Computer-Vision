@@ -6,7 +6,7 @@ import torch.optim as optim
 from model import UNet
 from transforms import transforms
 from train import train_fn
-from utils import get_loaders, load_checkpoint, save_checkpoint, check_accuracy, save_predictions_as_imgs
+from utils import get_loaders, load_checkpoint, save_checkpoint, check_accuracy, save_predictions_as_imgs, plot_attention_map_grid
 
 # device = "cuda" if torch.cuda.is_available() else "cpu" # for Google Colab
 device = "mps" if torch.backends.mps.is_available() else "cpu" # for Apple Silicon
@@ -18,7 +18,7 @@ os.makedirs("./12_UNet/2D/CustomData/saved_images/", exist_ok=True)
 
 learning_rate = 1e-4
 batch_size = 16
-num_epochs = 1
+num_epochs = 2
 image_height = 160  # 1280 originally
 image_width = 240   # 1918 originally
 load_model = False
@@ -27,7 +27,7 @@ train_mask_dir = "./12_UNet/2D/CustomData/train_masks/"
 val_img_dir = "./12_UNet/2D/CustomData/val_images/"
 val_mask_dir = "./12_UNet/2D/CustomData/val_masks/"
 
-model = UNet(in_channels=3, out_channels=1).to(device)
+model = UNet(in_channels=3, out_channels=1, attention=True).to(device)
 
 """
 `BCEWithLogitsLoss` applies Sigmoid activation over the final layer and calculates the nn.BCELoss.
@@ -70,3 +70,5 @@ for epoch in range(num_epochs):
     save_predictions_as_imgs(val_loader, model, folder="./12_UNet/2D/CustomData/saved_images/", device=device)
 
 
+    attention_map = model.final_attection_map.view(-1, 160, 240).cpu().numpy()
+    plot_attention_map_grid(attention_map, 2, 8)
