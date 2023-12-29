@@ -9,6 +9,9 @@ import torch
 import torch.nn as nn
 import torchvision.transforms.functional as F
 
+# device = "cuda" if torch.cuda.is_available() else "cpu" # for Google Colab
+device = "mps" if torch.backends.mps.is_available() else "cpu" # for Apple Silicon
+
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels, residual=False):
         self.residual = residual
@@ -49,9 +52,14 @@ class UNet(nn.Module):
                  in_channels,
                  out_channels,
                  features=[64, 128, 256, 512],
-                 residual=False):
+                 residual=False,
+                 attention=False):
+        
         self.residual = residual
+        self.attention = attention
+
         super(UNet, self).__init__()
+
         self.contracting_path = nn.ModuleList()
         self.expanding_path = nn.ModuleList()
         self.pooling = nn.MaxPool2d(kernel_size=2, stride=2)
@@ -105,14 +113,59 @@ class UNet(nn.Module):
             if x.shape != skip_connection.shape:
                 x = F.resize(x, size=skip_connection.shape[2:])
             
-            concat_skip = torch.cat((skip_connection, x), dim=1)
-            x = self.expanding_path[idx+1](concat_skip)
+            if self.attention:
+                attention_model = Attention(gate=x, skip_connection=skip_connection).to(device)
+                attention_map = attention_model()
+                attentive_skip = torch.mul(attention_map, skip_connection)
+                self.final_attection_map = attention_map # for visualization
+                output = torch.cat((attentive_skip, x), dim=1)
+            else:
+                output = torch.cat((skip_connection, x), dim=1)
+            x = self.expanding_path[idx+1](output)
 
         return self.final_conv(x)
     
+class Attention(nn.Module):
+    def __init__(self, gate, skip_connection):
+        self.gate = gate
+        self.skip_connection = skip_connection
+        self.num_channels = gate.shape[1] # in this srchitecture, skip_connection and gate have the same shape
+
+        super(Attention, self).__init__()
+
+        self.atten_conv1 = nn.Conv2d(in_channels=self.num_channels,
+                                    out_channels=self.num_channels,
+                                    kernel_size=1,
+                                    stride=1,
+                                    padding=0,
+                                    bias=False)
+        self.bn1 = nn.BatchNorm2d(self.num_channels)
+        self.atten_conv2 = nn.Conv2d(in_channels=self.num_channels,
+                                    out_channels=1, # to creat the attention map
+                                    kernel_size=1,
+                                    stride=1,
+                                    padding=0,
+                                    bias=False)
+        self.bn2 = nn.BatchNorm2d(1)
+        self.relu = nn.ReLU(inplace=True)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self):
+
+        g = self.bn1(self.atten_conv1(self.gate))
+        x = self.bn1(self.atten_conv1(self.skip_connection))
+
+        psi = self.relu(g + x)
+        sigma = self.bn2(self.atten_conv2(psi))
+
+        attention_map = self.sigmoid(sigma)
+
+        return attention_map
+
+
 def test():
     x = torch.randn((3, 1, 160, 160))
-    model = UNet(in_channels=1, out_channels=1)
+    model = UNet(in_channels=1, out_channels=1, attention=True)
     preds = model(x)
     print (preds.shape)
     print (x.shape)
