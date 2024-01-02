@@ -40,7 +40,44 @@ Where:
 3. Association: Target association involves linking the current frame's detections to existing tracks. This is achieved by computing the assignment cost matrix using the Intersection over Union (IoU) between bounding boxes. The Hungarian algorithm optimally matches detections to tracks, minimizing the total cost.
 
 **Hungarian Algorithm:**
-The Hungarian algorithm solves the assignment problem by finding the optimal assignment that minimizes the total cost. Given the cost matrix (association cost between tracks and detections), the algorithm efficiently determines the optimal assignment, ensuring each track is linked to the most likely detection.
+The Hungarian algorithm solves the assignment problem by finding the optimal assignment that minimizes the total cost. Given the cost matrix (association cost between tracks and detections), the algorithm efficiently determines the optimal assignment, ensuring each track is linked to the most likely detection. It is noteworthy that the time complexity of this algorithm is $O(n^3)$, which makes it much more efficient than the brute-force method with a time complexity of $O(n!)$. To perform this algorithm in Python, we can simply use Pscipy library as follows:
+
+```python
+import numpy as np
+from scipy.optimize import linear_sum_assignment
+
+def hungarian_algorithm(cost_matrix):
+    """
+    Apply the Hungarian Algorithm to solve the assignment problem.
+
+    Parameters:
+    - cost_matrix: 2D array representing the cost of assigning each agent to each task.
+      rows: tracks (i.e., agent)
+      columns: detections (i.e., cost of the task)
+
+    Returns:
+    - row_ind, col_ind: Arrays of row and column indices representing the optimal assignment.
+    """
+    row_ind, col_ind = linear_sum_assignment(cost_matrix)
+    return row_ind, col_ind
+
+cost_matrix = np.array([[10, 20, 15], [15, 25, 30], [25, 30, 35]])
+
+row_indices, col_indices = hungarian_algorithm(cost_matrix)
+
+print("Optimal Assignment:")
+for i in range(len(row_indices)):
+    print(f"Agent {row_indices[i]} is assigned to Task {col_indices[i]} with cost {cost_matrix[row_indices[i], col_indices[i]]}")
+```
+
+which returns:
+
+```bash
+Optimal Assignment:
+Agent 0 is assigned to Task 2 with cost 15
+Agent 1 is assigned to Task 0 with cost 15
+Agent 2 is assigned to Task 1 with cost 30
+```
 
 4. Track Identity Lifecycle: The track identity lifecycle involves track initialization, handling uncertainties, and managing lost frames. The state vector elements, such as velocities, provide information crucial for predicting the object's future state. Tracks undergo a probationary period to accumulate evidence. Tracks are terminated if they are not detected for a certain number of frames (Threshold for Track Lost - TLost). Reappearing objects resume tracking under new identities.
 
