@@ -58,3 +58,6 @@ The obtained appearance descriptors are then used to perform nearest neighbor qu
 **Improving Tracking Robustness:**
 By incorporating appearance-based information, DeepSORT significantly improves tracking robustness. The system becomes more resilient to challenges such as occlusion, lighting variations, and changes in object orientation. This additional feature helps maintain the identity of objects even when traditional tracking methods might struggle.
 
+Below is the demonstration of the object tracking performance using YOLOv8 and DeepSORT:
+
+![output](https://github.com/AbedSoleymani/Computer-Vision/assets/72225265/84c6158c-7845-422d-b80f-eb7a35adc117)
