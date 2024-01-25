@@ -16,7 +16,7 @@ Here we will provide a brief theoretical insights into UNet and addresse common 
 - [FAQs](#faqs)
 
 ## UNet Architecture
-UNet is a fully convolutional neural network architecture (with no fully connected layers) designed for semantic segmentation. It comprises a contracting path to capture context, a symmetric expanding path for precise localization, and skip connections to retain fine-grained information.
+UNet is a fully convolutional neural network architecture (with no fully connected layers) designed for semantic segmentation. It comprises a contracting path to capture context, a symmetric expanding path for precise segmentation, and skip connections to retain fine-grained information.
 * **Contracting Path:** The initial layers of the network contract the input's spatial dimensions, capturing high-level contextual information through convolutional and pooling operations.
 * **Expanding Path:** A symmetric expanding path reconstructs spatial details, upsampling the feature maps to generate a precise segmentation map.
 * **Skip Connections:** Skip connections connect one or several layers of the contracting path to the corresponding parts of the expanding path according to the network's depth. These connections allow the network to retain fine-grained details, addressing information loss during downsampling and upsampling, increasing the segmentation map’s precision. As shown in the following figure, the UNet can produce acceptable segmentation even without skip connections, but the added skip connections can introduce finer details (see the join between the two ellipses on the right).
