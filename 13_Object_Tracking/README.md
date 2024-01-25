@@ -5,7 +5,7 @@ Object tracking enables machines to follow and understand the motion of objects 
 Mean-shift and optical flow are traditional object tracking methods. However, they face challenges such as high computational complexity, sensitivity to noise, and tracking loss during occlusion. These limitations led to the evolution of more advanced tracking algorithms.
 
 Kalman Filter in SORT
-Kalman Filter plays a key role in the SORT (Simple Online and Realtime Tracking) algorithm. In the estimation stage, the Kalman filter employs a linear velocity model with a state vector that includes components like position, scale, and aspect ratio. This helps to predict the object's state at each frame.
+Kalman Filter in the SORT (Simple Online and Realtime Tracking) algorithm. In the estimation stage, the Kalman filter employs a linear velocity model with a state vector that includes components like position, scale, and aspect ratio. This helps to predict the object's state at each frame.
 
 ## SORT: Four Stages
 1. Detection: In the detection stage, the algorithm receives object bounding boxes from a detection module. To refine these detections, the Kalman filter is employed. The state vector, $x$, includes various elements representing the object's characteristics. Mathematically, the update process can be expressed as:
